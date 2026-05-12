@@ -1,9 +1,11 @@
 # CAC-by-channel
 *Project Overview*
+
 This project demonstrates an end-to-end data processing workflow for marketing performance analysis. The primary challenge lies in handling cumulative raw data exported from multiple ad platforms (TikTok, Meta, and Google).
 Since the source data contains multiple daily snapshots per advertisement, the project focuses on data cleaning, state-of-the-day extraction using window functions, and calculating core performance marketing KPIs.
 
 *Dataset Structure*
+
 The core dataset marketing_ads_raw.csv contains the following fields:
 | Field | Type | Description |
 | :--- | :--- | :--- |
