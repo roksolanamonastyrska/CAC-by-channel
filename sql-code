@@ -1,0 +1,78 @@
+/* 
+  STEP 1: Data Deduplication
+  Since the source data is cumulative, we use ROW_NUMBER() to identify 
+  the latest snapshot for each ad (ad_id) on any given day.
+*/
+WITH deduplicated AS (
+  SELECT 
+    *,
+    ROW_NUMBER() OVER (PARTITION BY ad_id, date ORDER BY timestamp DESC) AS row_num
+  FROM `nla-loyalty-data.data_1.marketing_` 
+),
+
+/* 
+  STEP 2: Daily Aggregation
+  We filter for row_num = 1 to keep only the final snapshot per day,
+  then aggregate metrics by date and source.
+*/
+calc AS (
+  SELECT
+    date,
+    source,
+    SUM(spend) AS total_spend,
+    SUM(impressions) AS total_impressions,
+    SUM(clicks) AS total_clicks,
+    SUM(installs) AS total_installs,
+    SUM(registrations) AS total_registrations
+  FROM deduplicated
+  WHERE row_num = 1
+  GROUP BY 1, 2
+  ORDER BY date DESC, total_spend DESC
+),
+
+/* 
+  STEP 3: Performance KPI Calculation
+  Computing core marketing metrics: CPM, CTR, CR, and CAC.
+  LTV values are assigned as constants based on historical data.
+*/
+metrics AS (
+  SELECT
+    source,
+    ROUND(SUM(total_spend), 0) AS total_spend,
+    ROUND(SAFE_DIVIDE(SUM(total_spend), SUM(total_impressions)) * 1000, 2) AS cpm,
+    ROUND(SAFE_DIVIDE(SUM(total_clicks), SUM(total_impressions)) * 100, 2) AS ctr_pct,
+    ROUND(SAFE_DIVIDE(SUM(total_installs), SUM(total_clicks)) * 100, 2) AS cr_click_install_pct,
+    ROUND(SAFE_DIVIDE(SUM(total_registrations), SUM(total_installs)) * 100, 2) AS cr_install_reg_pct,
+    ROUND(SAFE_DIVIDE(SUM(total_spend), SUM(total_registrations)), 2) AS cac,
+    CASE 
+      WHEN source = 'tiktok' THEN 8.50
+      WHEN source = 'meta'   THEN 6.20
+      WHEN source = 'google' THEN 12.40
+      ELSE 0 
+    END AS ltv
+  FROM calc
+  GROUP BY 1
+  ORDER BY 7 
+),
+
+/* 
+  STEP 4: Profitability Analysis
+  Calculating the LTV/CAC ratio to determine channel efficiency.
+*/
+analysis AS (
+  SELECT
+    *,
+    ROUND(SAFE_DIVIDE(ltv, cac), 2) AS ltv_cac
+  FROM metrics
+)
+
+/* 
+  FINAL OUTPUT: Monthly CAC Breakdown
+  Extracting the Cost Per Acquisition (CAC) trend grouped by channel and month.
+*/
+SELECT 
+  source,
+  EXTRACT(MONTH FROM date) AS month,
+  ROUND(SAFE_DIVIDE(SUM(total_spend), SUM(total_registrations)), 2) AS cac
+FROM calc
+GROUP BY 1, 2;
