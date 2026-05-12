@@ -20,5 +20,3 @@ The core dataset marketing_ads_raw.csv contains the following fields:
 | **installs** | INTEGER | Cumulative number of app installs |
 | **registrations**| INTEGER | Cumulative number of registrations |
 | **timestamp** | TIMESTAMP | Exact time when the ETL loaded the data (UTC) |
-
-<img width="1263" height="720" alt="Screenshot 2026-05-12 220507" src="https://github.com/user-attachments/assets/49aac616-59fa-4650-8f7d-e90378189db5" />
