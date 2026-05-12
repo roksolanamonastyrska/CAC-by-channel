@@ -1,0 +1,18 @@
+#Analysis & Insights
+1. Which channel has the lowest CAC?
+-- Meta has the lowest CAC at $3.10.
+
+2. At which stage does the funnel have the worst conversion rate?
+-- The most significant drop occurs at the Click → Install stage. Based on the performance metrics, the "bottleneck" of the funnel is the transition from a click to an app installation.
+
+3. Meta spends ~3.3x more than TikTok and Google. Is this justified from a CAC perspective?
+-- Yes, it is fully justified. Despite the significantly higher spend, Meta maintains the lowest CAC ($3.10) compared to TikTok ($5.39) and Google ($14.12), demonstrating high efficiency at scale.
+
+4. If LTV is TikTok = $8.50, META = $6.20, Google = $12.40 — calculate LTV/CAC for each channel. Which channel is the most profitable?
+-- Based on the LTV/CAC ratio, Meta is the most profitable channel with a ratio of 2.0.
+* Meta: $6.20 / $3.10 = 2.0
+* TikTok: $8.50 / $5.39 = 1.58
+* Google: $12.40 / $14.12 = 0.88
+
+
+
